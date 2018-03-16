@@ -1,0 +1,104 @@
+    //JSON解析器
+function parseJson(jsonStr) {
+        var i = 0
+        var str = jsonStr
+        return parseValue()
+
+        function parseValue() {
+            debugger;
+            if (str[i] === '"') {
+                return parseString()
+            } else if (str[i] === '[') {
+                return parseArray()
+            } else if (str[i] === "{") {
+                return parseObj()
+            } else if (str[i] === "n") {
+                return parseNull()
+            } else if (str[i] === "t") {
+                return parseTrue()
+            } else if (str[i] === "f") {
+                return parseFalse()
+            } else {
+                return parseNumber()
+            }
+        }
+
+        function parseString() {
+            var result = ""
+            i++
+            while (str[i] !== '"') {
+                result += str[i++]
+            }
+            i++
+            return result
+        }
+        //"[1,2,3]"
+        function parseArray() {
+            i++
+            var result = []
+            while (str[i] !== "]") {
+                result.push(parseValue())
+                if (str[i] === ",") {
+                    i++
+                }
+            }
+            i++
+            return result
+        }
+
+        function parseNull() {
+            result = str.substr(i, 4)
+            if (result === "null") {
+                i += 4
+                return null
+            } else {
+                throw new Error("Unexpected char at pos: " + i)
+            }
+        }
+
+        function parseFalse() {
+            result = str.substr(i, 5)
+            if (result === "false") {
+                i += 5
+                return false
+            } else {
+                throw new Error("Unexpected char at pos: " + i)
+            }
+        }
+
+        function parseTrue() {
+            result = str.substr(i, 4)
+            if (result === "true") {
+                i += 4
+                return true
+            } else {
+                throw new Error("Unexpected char at pos: " + i)
+            }
+        }
+
+        function parseNumber() {
+            var numStr = ""
+            while (str[i] >= 0 && str[i] <= 9) {
+                numStr += str[i++]
+            }
+            return parseFloat(numStr)
+        }
+
+        function parseObj() {
+            i++
+            var result = {}
+            var key
+            var value
+            while (str[i] !== "}") {
+                key = parseString()
+                i++
+                value = parseValue()
+                result[key] = value
+                if (str[i] === ",") {
+                    i++
+                }
+            }
+            i++
+            return result
+        }
+    }
